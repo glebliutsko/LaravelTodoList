@@ -13,12 +13,18 @@
             <h1>@yield('title')</h1>
 
             <nav class="nav nav-pills mx-1">
+                @auth
+                <li class="nav-item me-3">
+                    <a class="btn btn-outline-primary" href="{{ route('logout') }}">Выход</a>
+                </li>
+                @else
                 <li class="nav-item me-3">
                     <a class="btn btn-outline-primary" href="{{ route('login') }}">Вход</a>
                 </li>
                 <li class="nav-item">
                     <a class="btn btn-outline-primary" href="{{ route('registration') }}">Регистрация</a>
-                </li>
+                </li> 
+                @endauth
             </nav>
         </div>
     </header>
