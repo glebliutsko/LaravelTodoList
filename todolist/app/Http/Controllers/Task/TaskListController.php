@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\TaskList;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -14,10 +15,7 @@ class TaskListController extends Controller
 {
     public function view(Request $request): View
     {
-        $tasks = TaskList::where('user_id', $request->user()->id)
-            ->get();
-
-        return view('tasklists.index', ['tasklists' => $tasks]);
+        return view('tasklists.index', ['tasklists' => $request->user()->task_lists]);
     }
 
     public function tasks(Request $request, TaskList $tasklist): View
