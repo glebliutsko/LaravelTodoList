@@ -15,6 +15,9 @@
             <nav class="nav nav-pills mx-1">
                 @auth
                 <li class="nav-item me-3">
+                    <a class="btn btn-outline-primary" href="{{ route('tasklists') }}">Задачи</a>
+                </li>
+                <li class="nav-item me-3">
                     <a class="btn btn-outline-primary" href="{{ route('logout') }}">Выход</a>
                 </li>
                 @else
@@ -29,7 +32,7 @@
         </div>
     </header>
 
-    <main class="w-100 h-100 pt-5 bg-light">
+    <main class="w-100 pt-5 bg-light" style="min-height: 100%">
         <div class="w-100 m-auto" style="max-width: 1320px">
             @yield('content')
         </div>

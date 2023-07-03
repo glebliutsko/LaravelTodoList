@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Authorization\RegistrationController;
 use App\Http\Controllers\Authorization\LoginController;
+use App\Http\Controllers\Task\TaskListController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,4 +47,24 @@ Route::middleware('auth')->group(function () {
         'logout',
         [LoginController::class, 'logout']
     )->name('logout');
+
+    Route::get(
+        'tasklists',
+        [TaskListController::class, 'view']
+    )->name('tasklists');
+
+    Route::post(
+        'tasklists',
+        [TaskListController::class, 'create']
+    )->name('tasklist-create');
+
+    Route::get(
+        'tasklists/{tasklist}/tasks',
+        [TaskListController::class, 'tasks']
+    )->name('tasklist-tasks');
+
+    Route::post(
+        'tasklists/{tasklist}/tasks/new-task',
+        [TaskListController::class, 'create_task']
+    )->name('tasklist-new-task');
 });
