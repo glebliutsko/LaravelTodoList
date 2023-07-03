@@ -58,6 +58,11 @@ Route::middleware('auth')->group(function () {
         [TaskListController::class, 'create']
     )->name('tasklist-create');
 
+    Route::post(
+        'tasklists/{tasklist}/remove',
+        [TaskListController::class, 'remove']
+    )->name('tasklist-remove');
+
     Route::get(
         'tasklists/{tasklist}/tasks',
         [TaskListController::class, 'tasks']
@@ -67,4 +72,9 @@ Route::middleware('auth')->group(function () {
         'tasklists/{tasklist}/tasks/new-task',
         [TaskListController::class, 'create_task']
     )->name('tasklist-new-task');
+
+    Route::post(
+        'tasklists/{tasklist}/tasks/{task}/remove',
+        [TaskListController::class, 'remove_task']
+    )->name('tasklist-remove-task');
 });

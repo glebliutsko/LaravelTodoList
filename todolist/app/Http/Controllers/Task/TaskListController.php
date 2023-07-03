@@ -20,16 +20,8 @@ class TaskListController extends Controller
         return view('tasklists.index', ['tasklists' => $tasks]);
     }
 
-    public function tasks(Request $request, int $tasklist_id): View
+    public function tasks(Request $request, TaskList $tasklist): View
     {
-        $tasklist = TaskList::with('tasks')
-            ->where('id', $tasklist_id)
-            ->first();
-
-        if ($tasklist === null) {
-            abort(404);
-        }
-
         if (!Gate::allows('tasklist', $tasklist)) {
             abort(403);
         }
@@ -37,18 +29,11 @@ class TaskListController extends Controller
         return view('tasklists.tasks', ['tasklist' => $tasklist]);
     }
 
-    public function create_task(Request $request, int $tasklist_id): RedirectResponse
+    public function create_task(Request $request, TaskList $tasklist): RedirectResponse
     {
         $request->validate([
             'title' => ['required', 'string', 'max:255']
         ]);
-
-        $tasklist = TaskList::where('id', $tasklist_id)
-            ->first();
-
-        if ($tasklist === null) {
-            abort(404);
-        }
 
         if (!Gate::allows('tasklist', $tasklist)) {
             abort(403);
@@ -59,7 +44,7 @@ class TaskListController extends Controller
         $task->task_list_id = $tasklist->id;
         $task->save();
 
-        return to_route('tasklist-tasks', ['tasklist' => $tasklist_id]);
+        return to_route('tasklist-tasks', ['tasklist' => $tasklist->id]);
     }
 
     public function create(Request $request): RedirectResponse
@@ -74,5 +59,31 @@ class TaskListController extends Controller
         $taskList->save();
 
         return to_route('tasklists');
+    }
+
+    public function remove(Request $request, TaskList $tasklist): RedirectResponse
+    {
+        if (!Gate::allows('tasklist', $tasklist)) {
+            abort(403);
+        }
+
+        $tasklist->delete();
+
+        return to_route('tasklists', ['tasklist' => $tasklist->id]);
+    }
+
+    public function remove_task(Request $request, TaskList $tasklist, Task $task): RedirectResponse
+    {
+        if ($tasklist->id !== $task->task_list_id) {
+            abort(404);
+        }
+
+        if (!Gate::allows('tasklist', $tasklist)) {
+            abort(403);
+        }
+
+        $task->delete();
+
+        return to_route('tasklist-tasks', ['tasklist' => $tasklist->id]);
     }
 }

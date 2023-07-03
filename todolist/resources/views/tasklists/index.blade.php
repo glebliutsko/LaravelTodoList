@@ -35,10 +35,16 @@
 
         @foreach ($tasklists as $tasklist)
             <ul>
-                <li>
-                    <a href="{{ route('tasklist-tasks', ['tasklist' => $tasklist->id]) }}">
+                <li class="d-flex align-items-center justify-content-between">
+                    <a class="d-block" href="{{ route('tasklist-tasks', ['tasklist' => $tasklist->id]) }}">
                         {{ $tasklist->title }}
                     </a>
+                    <div>
+                        <form method="POST" action="{{ route('tasklist-remove', ['tasklist' => $tasklist->id]) }}">
+                            @csrf
+                            <button class="btn btn-danger">Удалить</button>
+                        </form>
+                    </div>
                 </li>
             </ul>
         @endforeach
