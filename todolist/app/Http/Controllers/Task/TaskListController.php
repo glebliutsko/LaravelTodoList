@@ -7,12 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Models\TaskList;
 use App\Models\Task;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Services\UgcImageService;
 
 class TaskListController extends Controller
 {
+    private $ugcImageService;
+
+    public function __construct(UgcImageService $ugcImageService)
+    {
+        $this->ugcImageService = $ugcImageService;
+    }
+
     public function view(Request $request): View
     {
         return view('tasklists.index', ['tasklists' => $request->user()->task_lists]);
@@ -24,7 +31,10 @@ class TaskListController extends Controller
             abort(403);
         }
 
-        return view('tasklists.tasks', ['tasklist' => $tasklist]);
+        $fullTaskList = TaskList::with('tasks', 'tasks.images')
+            ->where('id', $tasklist->id)
+            ->first();
+        return view('tasklists.tasks', ['tasklist' => $fullTaskList]);
     }
 
     public function create_task(Request $request, TaskList $tasklist): RedirectResponse
@@ -41,6 +51,16 @@ class TaskListController extends Controller
         $task->title = $request->title;
         $task->task_list_id = $tasklist->id;
         $task->save();
+
+        if ($request->hasFile('images'))
+        {
+            $files = $request->file('images');
+            
+            foreach ($files as $file) {
+                $image = $this->ugcImageService->save($file);
+                $task->images()->attach($image);
+            }
+        }
 
         return to_route('tasklist-tasks', ['tasklist' => $tasklist->id]);
     }
